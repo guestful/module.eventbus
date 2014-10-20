@@ -1,0 +1,56 @@
+/**
+ * Copyright (C) 2013 Guestful (info@guestful.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.guestful.bus;
+
+import com.google.common.eventbus.AsyncEventBus;
+import com.google.common.eventbus.SubscriberExceptionHandler;
+
+import java.util.concurrent.Executor;
+import java.util.stream.Stream;
+
+/**
+ * date 2014-06-02
+ *
+ * @author Mathieu Carbou (mathieu.carbou@gmail.com)
+ */
+public class GuavaEventBus implements EventBus {
+
+    private final AsyncEventBus eventBus;
+
+    public GuavaEventBus(Executor executor, SubscriberExceptionHandler subscriberExceptionHandler) {
+        this.eventBus = new AsyncEventBus(executor, subscriberExceptionHandler);
+    }
+
+    @Override
+    public void post(Stream<? extends Event> eventStream) {
+        eventStream.forEach(this.eventBus::post);
+    }
+
+    public void register(Object handler) {
+        this.eventBus.register(handler);
+    }
+
+    public void register(Object... handlers) {
+        for (Object handler : handlers) {
+            register(handler);
+        }
+    }
+
+    public void unregister(Object handler) {
+        this.eventBus.unregister(handler);
+    }
+
+}
